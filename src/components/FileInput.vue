@@ -54,7 +54,8 @@ watch(selectedFiles, (files) => {
 </script>
 
 <template>
-  <div class="dropbox border-full p-6 m-4 text-center max-w-lg" @drop.prevent.stop="changeEvent"
+  <div class="dropbox border-full w-full my-4 p-3 py-10 text-center max-w-2xl"
+       @drop.prevent.stop="changeEvent"
        @dragstart.prevent.stop=""
        @dragend.prevent.stop=""
        @dragover.prevent.stop=""
