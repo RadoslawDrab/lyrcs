@@ -23,7 +23,7 @@ watch(currentTheme, set)
 </script>
 
 <template>
-  <button class="btn-outline btn-contrast p-1" @click="toggle" :data-theme="currentTheme" aria-label="Theme mode toggle button">
+  <button class="btn-inline btn-primary p-1" @click="toggle" :data-theme="currentTheme" aria-label="Theme mode toggle button">
     <PhSun v-if="currentTheme === 'light'" :size="props.size" />
     <PhMoon v-if="currentTheme === 'dark'" :size="props.size" />
   </button>
