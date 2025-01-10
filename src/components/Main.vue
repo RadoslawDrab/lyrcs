@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { getTimeFormatted } from '../utils/time'
 import FileInput from "./FileInput.vue";
 import {computed, nextTick, ref} from "vue";
@@ -15,10 +16,12 @@ const lines = computed<Line[]>(() => {
 
   const l = lyrics.value?.split(/(?<!;)\n/)
       .filter((line) => line.trim().length > 0)
-      .map((line, index) => ({text: line.trim(), index }))
+      .map((line, index) => ({text: line.trim(), start: 0, end: 0, index }))
   console.log(l)
   return l
 });
+const currentLine = ref<number>(-1)
+const keyIsPressed = ref<boolean>(false)
 
 function submit() {
 
@@ -38,6 +41,33 @@ function getFill(line: Line, percent: boolean = false) {
 function getLineAnimationState(line: Line) {
     return getFill(line) > 0 && getFill(line) < 1 && audioControlsRef.value?.isPlaying ? 'running' : 'paused'
 }
+const activeLineClass = (line: Line) => line.index == currentLine.value ? 'active' : ''
+
+onMounted(() => {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.code != 'Space') return
+        e.preventDefault()
+
+        keyIsPressed.value = true
+    })
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+        keyIsPressed.value = false
+    })
+})
+watch(keyIsPressed, (isPressed) => {
+    if (!audioControlsRef.value) return
+    console.log(lines.value[currentLine.value])
+    if (!isPressed) {
+        if (currentLine.value >= 0 && currentLine.value < lines.value.length) {
+            lines.value[currentLine.value].start = audioControlsRef.value.currentTime
+        }
+    } else {
+        if (currentLine.value >= 0 && currentLine.value < lines.value.length) {
+            lines.value[currentLine.value].end = audioControlsRef.value.currentTime
+        }
+        currentLine.value++
+    }
+})
 </script>
 
 <template>
@@ -52,7 +82,7 @@ function getLineAnimationState(line: Line) {
         <ul class="flex flex-col gap-3 mt-4 border-full p-2 ">
             <li class="group" v-for="line in lines" :key="line.index">
                 <span class="p-2" v-text="getTimeFormatted(line.start)" />
-                <div class="p-2 w-full line">
+                <div class="p-2 w-full line" :class="activeLineClass(line)">
                     <div class="line-fill" :style="`--state: ${getLineAnimationState(line)}; --duration: ${line.end - line.start}s`" />
                     <span class="block" v-for="l in line.text?.split('\n')" :key="l">
                         {{ l.replace(';', '') }}
@@ -68,6 +98,9 @@ function getLineAnimationState(line: Line) {
 <style scoped lang="scss">
 .line {
     position: relative;
+    &.active {
+        @apply border-blue-500;
+    }
     .line-fill {
         position: absolute;
         top: 0;
