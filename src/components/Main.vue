@@ -1,12 +1,14 @@
 <script setup lang="ts">
 
+import { getTimeFormatted } from '../utils/time'
 import FileInput from "./FileInput.vue";
 import {computed, nextTick, ref} from "vue";
 import {Line} from "../types/lyrics";
 import AudioControls from "./AudioControls.vue";
 
 const audioFile = ref<{type: string, url: string} | null>(null);
-const audioElement = ref<HTMLAudioElement | null>(null);
+const audioControlsRef = ref<InstanceType<typeof AudioControls> | null>(null)
+
 const lyrics = ref<string | null>(null);
 const lines = computed<Line[]>(() => {
   if (lyrics.value === null) return []
@@ -28,26 +30,64 @@ async function onFilesLoad(files: File[]) {
   await nextTick()
   audioFile.value = {type: files[0].type, url: URL.createObjectURL(files[0]) }
 }
+function getFill(line: Line, percent: boolean = false) {
+    if (!audioControlsRef.value) return 0
+    const value = Math.max(Math.min((audioControlsRef.value.currentTime - line.start) / (line.end - line.start), 1), 0)
+    return percent ? value * 100 : value
+}
+function getLineAnimationState(line: Line) {
+    return getFill(line) > 0 && getFill(line) < 1 && audioControlsRef.value?.isPlaying ? 'running' : 'paused'
+}
 </script>
 
 <template>
-  <main class="max-w-2xl mx-auto px-2">
-    <form @submit.prevent="submit">
-      <FileInput accept="audio/.*" @filesChange="onFilesLoad" @fileDeleted="() => audioFile = null" />
-      <textarea class="w-full input p-2" v-model="lyrics" />
-    </form>
-      <div v-if="audioFile" class="mt-6 p-2 border-full">
-        <AudioControls v-model="audioFile" />
-      </div>
-      <ul class="flex flex-col gap-3 mt-4 border-full p-2">
-        <li class="group" v-for="line in lines" :key="line.index">
-          <span class="p-2" v-text="line.start"></span>
-          <p class="p-2 w-full">
-            <span class="block" v-for="l in line.text?.split('\n')" v-text="l.replace(';', '')" :key="l" />
-          </p>
-          <span class="p-2" v-text="line.end"></span>
-        </li>
-      </ul>
-    <button :disabled="lines.length <= 0" type="submit">Submit</button>
-  </main>
+    <main class="max-w-3xl mx-auto px-2 relative">
+        <div v-if="audioFile" class="mt-6 p-2 border-full col-span-full sticky top-2 bg-zinc-100 dark:bg-zinc-800">
+            <AudioControls ref="audioControlsRef" v-model="audioFile" />
+        </div>
+        <form @submit.prevent="submit">
+            <FileInput class="max-w-3xl" accept="audio/.*" @filesChange="onFilesLoad" @fileDeleted="() => audioFile = null" />
+            <textarea class="w-full input p-2" v-model="lyrics" />
+        </form>
+        <ul class="flex flex-col gap-3 mt-4 border-full p-2 ">
+            <li class="group" v-for="line in lines" :key="line.index">
+                <span class="p-2" v-text="getTimeFormatted(line.start)" />
+                <div class="p-2 w-full line">
+                    <div class="line-fill" :style="`--state: ${getLineAnimationState(line)}; --duration: ${line.end - line.start}s`" />
+                    <span class="block" v-for="l in line.text?.split('\n')" :key="l">
+                        {{ l.replace(';', '') }}
+                    </span>
+                </div>
+                <span class="p-2" v-text="getTimeFormatted(line.end)" />
+            </li>
+        </ul>
+        <button :disabled="lines.length <= 0" type="submit">Submit</button>
+    </main>
 </template>
+
+<style scoped lang="scss">
+.line {
+    position: relative;
+    .line-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        content: "";
+        height: 100%;
+        animation: fill-in linear forwards;
+        animation-duration: var(--duration);
+        animation-play-state: var(--state);
+        //width: var(--fill);
+
+        @apply bg-blue-500 opacity-15;
+    }
+    @keyframes fill-in {
+        from {
+            width: 0;
+        }
+        to {
+            width: 100%;
+        }
+    }
+}
+</style>
