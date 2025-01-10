@@ -4,7 +4,7 @@
 
 
 html {
-  @apply bg-zinc-200 text-zinc-800;
+  @apply bg-zinc-100 text-zinc-800;
   @apply dark:bg-zinc-800 dark:text-zinc-200;
 }
 @layer utilities {
@@ -58,7 +58,7 @@ html {
     }
   }
   .input {
-    @apply border-full bg-zinc-100 dark:bg-zinc-800 focus-within:border-blue-500 outline-none;
+    @apply border-full bg-zinc-200 dark:bg-zinc-900 focus-within:border-blue-500 outline-none;
   }
   .btn-inline {
     @apply transition-all hover:cursor-pointer;
