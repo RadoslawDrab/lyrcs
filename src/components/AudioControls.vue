@@ -57,6 +57,12 @@ onMounted(() => {
     currentTime.value = audio.currentTime
   })
 })
+
+defineExpose({
+    currentTime,
+    duration: audioElement.value?.duration ?? null,
+    isPlaying
+})
 </script>
 
 <template>
