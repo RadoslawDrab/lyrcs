@@ -13,7 +13,8 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   filesLoad: [File[]],
   filesChange: [File[]],
-  invalidFileType: [File]
+  invalidFileType: [File],
+  fileDeleted: []
 }>()
 
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -48,6 +49,10 @@ async function changeEvent(event: Event | DragEvent) {
 
   emit('filesLoad', props.multiple ? files : files.slice(0, 1))
 }
+function onFileDeleted(index: number) {
+  selectedFiles.value = selectedFiles.value.filter((_, i) => i !== index)
+  emit('fileDeleted')
+}
 watch(selectedFiles, (files) => {
   emit('filesChange', props.multiple ? files : files.slice(0, 1))
 })
@@ -67,7 +72,7 @@ watch(selectedFiles, (files) => {
     </span>
     <ul v-if="selectedFiles.length > 0" class="flex flex-col items-start gap-2 mt-4 border-base border-t pt-4">
       <li class="group" v-for="(file, index) in selectedFiles" :key="file.name">
-        <button class="btn-outline btn-danger p-2" @click="() => selectedFiles = selectedFiles.filter((_, i) => i !== index)">
+        <button class="btn-outline btn-danger p-2" @click="onFileDeleted(index)">
           <PhX weight="bold" />
         </button>
         <span class="py-1 px-2">
