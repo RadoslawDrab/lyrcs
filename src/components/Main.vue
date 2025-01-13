@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import { getTimeFormatted } from '../utils/time'
+import { getTime } from '../utils/time'
 import FileInput from "./FileInput.vue";
 import {computed, nextTick, ref} from "vue";
 import {Line} from "../types/lyrics";
@@ -20,7 +20,7 @@ const lines = computed<Line[]>(() => {
   console.log(l)
   return l
 });
-const currentLine = ref<number>(-1)
+const currentLine = ref<number>(0)
 const keyIsPressed = ref<boolean>(false)
 
 function submit() {
@@ -56,8 +56,7 @@ onMounted(() => {
 })
 watch(keyIsPressed, (isPressed) => {
     if (!audioControlsRef.value) return
-    console.log(lines.value[currentLine.value])
-    if (!isPressed) {
+    if (isPressed) {
         if (currentLine.value >= 0 && currentLine.value < lines.value.length) {
             lines.value[currentLine.value].start = audioControlsRef.value.currentTime
         }

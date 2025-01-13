@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { getTime } from '../utils/time'
 import {onMounted, ref} from "vue";
 import {
   PhCaretDoubleLeft,
   PhCaretDoubleRight,
   PhCaretLeft,
-  PhCaretRight, PhCircle, PhClockCounterClockwise,
+  PhCaretRight, PhClockCounterClockwise,
   PhPlay,
   PhPlayPause,
 } from "@phosphor-icons/vue";
@@ -22,11 +23,8 @@ const currentTime = ref<number>(0)
 
 function getTimeFormatted(inverted: boolean = false) {
   const time = Math.abs(inverted ? (audioElement.value?.duration ?? 0) - currentTime.value : currentTime.value)
-  const milliseconds = Math.round((time - Math.floor(time)) * 1000)
-  const minutes = Math.floor(time / 60)
-  const seconds = Math.round(time % 60)
 
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`
+  return getTime(time, 3)
 }
 
 function togglePlay() {
