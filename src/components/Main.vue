@@ -87,7 +87,7 @@ watch(keyIsPressed, (isPressed) => {
                         {{ l.replace(';', '') }}
                     </span>
                 </div>
-                <span class="p-2" v-text="getTimeFormatted(line.end)" />
+                <span class="p-2" v-text="getTime(line.end, 3)" :class="activeLineClass(line, keyIsPressed)" />
             </li>
         </ul>
         <button :disabled="lines.length <= 0" type="submit">Submit</button>
