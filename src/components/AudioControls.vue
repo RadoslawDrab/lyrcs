@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { getTime } from '../utils/time'
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import {
   PhCaretDoubleLeft,
   PhCaretDoubleRight,
   PhCaretLeft,
   PhCaretRight, PhClockCounterClockwise,
   PhPlay,
-  PhPlayPause,
+  PhPlayPause
 } from "@phosphor-icons/vue";
 
-const audioFile = defineModel<{type: string, url: string}>({required: true});
+const audioFile = defineModel<{ type: string, url: string }>({ required: true });
 const props = withDefaults(defineProps<{
   size?: number
 }>(), {
   size: 24
 })
+const emit = defineEmits<{
+  timeUpdated: [];
+}>()
 
 const audioElement = ref<HTMLAudioElement | null>(null);
 const isPlaying = ref<boolean>(false)
@@ -33,22 +36,31 @@ function togglePlay() {
   if (audioElement.value.paused) {
     audioElement.value.play()
     isPlaying.value = true
-  }
-  else {
+  } else {
     audioElement.value.pause()
     isPlaying.value = false
   }
 }
+
 function updateTime(time: number) {
   if (!audioElement.value) return
   audioElement.value.currentTime += time
+  emit('timeUpdated')
 }
+
 function setTime(time: number) {
   if (!audioElement.value) return
   audioElement.value.currentTime = time
+  emit('timeUpdated')
 }
 
 onMounted(() => {
+  document.addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key !== " " || !event.ctrlKey || event.repeat) return
+    event.preventDefault()
+    togglePlay()
+    document.documentElement.focus()
+  })
   if (!audioElement.value) return
   audioElement.value.addEventListener("timeupdate", (event) => {
     const audio = event.target as HTMLAudioElement
@@ -57,42 +69,44 @@ onMounted(() => {
 })
 
 defineExpose({
-    currentTime,
-    duration: audioElement.value?.duration ?? null,
-    isPlaying
+  currentTime,
+  duration: audioElement.value?.duration ?? null,
+  isPlaying,
+  setTime
 })
 </script>
 
 <template>
   <div class="grid grid-cols-3 items-start justify-items-center gap-2 p-1">
     <audio ref="audioElement" class="col-span-full">
-      <source :type="audioFile.type" :src="audioFile.url" />
+      <source :type="audioFile.type" :src="audioFile.url"/>
     </audio>
     <div class="progress-bar col-span-full">
-      <div class="progress-bar-fill" :style="`width: ${audioElement?.duration ? 100 * currentTime / audioElement.duration : 100}%`">
+      <div class="progress-bar-fill"
+           :style="`width: ${audioElement?.duration ? 100 * currentTime / audioElement.duration : 100}%`">
         <!--          <PhCircle class="knob" :size="props.size" weight="fill" />-->
       </div>
     </div>
     <span class="justify-self-start">{{ getTimeFormatted() }}</span>
     <nav class="flex gap-3 self-center">
-      <button class="btn-inline" @click="() => setTime(0)">
-        <PhClockCounterClockwise :size="props.size" />
+      <button class="btn-inline" @click="setTime(0)">
+        <PhClockCounterClockwise :size="props.size"/>
       </button>
-      <button class="btn-inline" @click="() => updateTime(-5)">
-        <PhCaretDoubleLeft :size="props.size" />
+      <button class="btn-inline" @click="updateTime(-5)">
+        <PhCaretDoubleLeft :size="props.size"/>
       </button>
-      <button class="btn-inline" @click="() => updateTime(-1)">
-        <PhCaretLeft :size="props.size" />
+      <button class="btn-inline" @click="updateTime(-1)">
+        <PhCaretLeft :size="props.size"/>
       </button>
       <button class="btn-outline btn-primary p-1.5" @click="togglePlay">
-        <PhPlayPause v-if="isPlaying" :size="props.size" />
-        <PhPlay v-else :size="props.size" />
+        <PhPlayPause v-if="isPlaying" :size="props.size"/>
+        <PhPlay v-else :size="props.size"/>
       </button>
       <button class="btn-inline" @click="() => updateTime(1)">
-        <PhCaretRight :size="props.size" />
+        <PhCaretRight :size="props.size"/>
       </button>
       <button class="btn-inline" @click="() => updateTime(5)">
-        <PhCaretDoubleRight :size="props.size" />
+        <PhCaretDoubleRight :size="props.size"/>
       </button>
     </nav>
     <span class="justify-self-end">{{ getTimeFormatted(true) }}</span>
