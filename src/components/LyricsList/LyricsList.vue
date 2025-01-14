@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import AudioControls from 'components/AudioControls.vue'
 import { ref } from 'vue'
-import { Line } from '../../types/lyrics'
-import { getTime } from '../../utils/time'
+
+import { getTime } from '@utils/time'
+
+import { Line } from '@type/lyrics'
+
+import AudioControls from '@components/AudioControls'
 
 
 const lines = defineModel<Line[]>({ default: [] });
