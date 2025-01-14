@@ -3,5 +3,5 @@ export function getTime(time: number, msPad: number = 2): string {
     const seconds = Math.floor(time) % 60
     const minutes = (Math.floor(time) - seconds) / 60
 
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(msPad, '0')}`
+    return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ milliseconds.toString().padStart(msPad, '0').slice(0, msPad) }`
 }
