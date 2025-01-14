@@ -1,0 +1,47 @@
+@layer utilities {
+	.filter-brightness {
+		&-50 {
+			filter: brightness(50%);
+		}
+
+		&-100 {
+			filter: brightness(60%);
+		}
+
+		&-200 {
+			filter: brightness(70%);
+		}
+
+		&-300 {
+			filter: brightness(80%);
+		}
+
+		&-400 {
+			filter: brightness(90%);
+		}
+
+		&-500 {
+			filter: brightness(100%);
+		}
+
+		&-600 {
+			filter: brightness(110%);
+		}
+
+		&-700 {
+			filter: brightness(120%);
+		}
+
+		&-800 {
+			filter: brightness(130%);
+		}
+
+		&-900 {
+			filter: brightness(140%);
+		}
+
+		&-950 {
+			filter: brightness(150%);
+		}
+	}
+}

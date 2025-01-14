@@ -1,5 +1,5 @@
-import { getTime } from './time'
-import { Line } from '../types/lyrics'
+import { getTime } from '@utils/time'
+import { Line } from '@type/lyrics'
 
 export function linesToLrc(lines: Line[]): string {
     return lines.reduce((str, l) => {

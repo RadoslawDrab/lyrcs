@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getTime } from '../utils/time'
 import { onMounted, ref } from "vue";
 import {
   PhCaretDoubleLeft,
@@ -9,6 +8,8 @@ import {
   PhPlay,
   PhPlayPause
 } from "@phosphor-icons/vue";
+
+import { getTime } from '@utils/time'
 
 const audioFile = defineModel<{ type: string, url: string }>({ required: true });
 const props = withDefaults(defineProps<{

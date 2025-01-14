@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {nextTick, ref, watch} from "vue";
+import { nextTick, ref, watch } from "vue";
 import { PhX } from "@phosphor-icons/vue"
 
 const props = withDefaults(defineProps<{
@@ -8,13 +8,13 @@ const props = withDefaults(defineProps<{
   displayFileName?: boolean
 }>(), {
   multiple: false,
-  displayFileName: true,
+  displayFileName: true
 })
 const emit = defineEmits<{
-  filesLoad: [File[]],
-  filesChange: [File[]],
-  invalidFileType: [File],
-  fileDeleted: []
+  (e: 'filesLoad', files: File[]): void,
+  (e: 'filesChange', files: File[]): void,
+  (e: 'invalidFileType', file: File): void,
+  (e: 'fileDeleted'): void
 }>()
 
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -22,7 +22,7 @@ const selectedFiles = ref<File[]>([])
 const accept = Array.isArray(props.accept) ? props.accept : new RegExp(props.accept)
 
 async function changeEvent(event: Event | DragEvent) {
-  let files: File[] = []
+  const files: File[] = []
 
   if (event instanceof DragEvent) {
     event.target?.classList.remove('dragging')
@@ -40,19 +40,20 @@ async function changeEvent(event: Event | DragEvent) {
       emit('invalidFileType', file)
       continue
     }
-      files.push(file)
+    files.push(file)
   }
   if (files.length == 0) return
 
   selectedFiles.value = props.multiple ? selectedFiles.value.concat(files) : files
   await nextTick()
-
   emit('filesLoad', props.multiple ? files : files.slice(0, 1))
 }
+
 function onFileDeleted(index: number) {
   selectedFiles.value = selectedFiles.value.filter((_, i) => i !== index)
   emit('fileDeleted')
 }
+
 watch(selectedFiles, (files) => {
   emit('filesChange', props.multiple ? files : files.slice(0, 1))
 })
@@ -68,20 +69,23 @@ watch(selectedFiles, (files) => {
        @dragleave.prevent.stop="(e) => e.target?.classList.remove('dragging')"
        @drag.prevent.stop="">
     <span>
-    Drop here or <input class="btn-inline btn-primary" type="button" value="Choose file" @click="() => fileInput?.click()">
+    Drop here or <input class="btn-inline btn-primary" type="button" value="Choose file"
+                        @click="() => fileInput?.click()">
     </span>
     <ul v-if="selectedFiles.length > 0" class="flex flex-col items-start gap-2 mt-4 border-base border-t pt-4">
       <li class="group" v-for="(file, index) in selectedFiles" :key="file.name">
         <button class="btn-outline btn-danger p-2" @click="onFileDeleted(index)">
-          <PhX weight="bold" />
+          <PhX weight="bold"/>
         </button>
         <span class="py-1 px-2">
-        {{file.name}}
+        {{ file.name }}
         </span>
       </li>
     </ul>
 
-    <input ref="fileInput" type="file" :accept="Array.isArray(props.accept) ? props.accept.join(', ') : props.accept.toString()" @change="changeEvent" style="display: none" :multiple="props.multiple" aria-hidden="true">
+    <input ref="fileInput" type="file"
+           :accept="Array.isArray(props.accept) ? props.accept.join(', ') : props.accept.toString()"
+           @change="changeEvent" style="display: none" :multiple="props.multiple" aria-hidden="true">
   </div>
 </template>
 

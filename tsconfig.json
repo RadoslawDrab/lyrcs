@@ -1,14 +1,27 @@
 {
   "include": [
-    "src/*.ts",
+	"src/**/*"
   ],
   "compilerOptions": {
-    "target": "es2017",
-    "module": "NodeNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": "src"
+	"target": "ES2023",
+	"esModuleInterop": true,
+	"forceConsistentCasingInFileNames": true,
+	"strict": false,
+	"skipLibCheck": true,
+	"baseUrl": "./src",
+	"paths": {
+	  "@utils/*": [
+		"utils/*"
+	  ],
+	  "@type/*": [
+		"types/*"
+	  ],
+	  "@components/*": [
+		"components/*"
+	  ],
+	  "@assets/*": [
+		"assets/*"
+	  ]
+	}
   }
 }

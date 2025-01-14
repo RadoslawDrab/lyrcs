@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import LyricsList from './LyricsList/LyricsList.vue'
-import { Line } from 'types/lyrics.js'
-import { download } from '../utils/index'
-import { linesToLrc } from '../utils/lyrics'
-import FileInput from "./FileInput.vue";
-import {computed, nextTick, ref} from "vue";
-import {Line} from "../types/lyrics";
-import AudioControls from "./AudioControls.vue";
+
+import { download } from '@utils/index'
+import { linesToLrc } from '@utils/lyrics'
+
+import { Line } from '@type/lyrics'
+
+import LyricsList from '@components/LyricsList/LyricsList.vue'
+import FileInput from "@components/FileInput.vue";
+import AudioControls from "@components/AudioControls.vue";
 
 const audioFile = ref<{ name: string, type: string, url: string } | null>(null);
 const audioControlsRef = ref<InstanceType<typeof AudioControls> | null>(null)
@@ -33,7 +34,6 @@ async function onFilesLoad(files: File[]) {
 }
 
 function resetFillAnimations() {
-  console.log(lyricsList.value?.lineFillRefs)
   lyricsList.value?.lineFillRefs?.forEach((ref) => {
     ref.style.animation = 'none';
     ref.offsetHeight; /* trigger reflow */

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ThemeButton from "./ThemeButton.vue";
+import ThemeButton from "@components/ThemeButton.vue";
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import ThemeButton from "./ThemeButton.vue";
     <div class="mx-auto flex items-center justify-between gap-2 w-full max-w-2xl p-3">
       LOGO
       <nav class="flex items-center gap-2">
-        <ThemeButton />
+        <ThemeButton/>
       </nav>
     </div>
   </header>
