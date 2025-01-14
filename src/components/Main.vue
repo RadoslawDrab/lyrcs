@@ -40,10 +40,10 @@ function resetFillAnimations() {
     ref.style.animation = '';
   })
 }
-function getLineAnimationState(line: Line) {
-    return getFill(line) > 0 && getFill(line) < 1 && audioControlsRef.value?.isPlaying ? 'running' : 'paused'
+
+function exportLines() {
+  download(`${ audioFile.value?.name.replace(/\..{2,}$/, '') ?? 'lyrics' }.lrc`, linesToLrc(lines.value))
 }
-const activeLineClass = (line: Line) => line.index == currentLine.value ? 'active' : ''
 
 onMounted(() => {
   document.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -71,6 +71,12 @@ watch(keyIsPressed, (isPressed) => {
     }
     currentLine.value++
   }
+})
+watch(currentLine, (line) => {
+  lyricsList.value?.lineContentRefs?.forEach((ref) => {
+    if (ref.dataset.index !== line.toString()) return
+    ref.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  })
 })
 </script>
 
