@@ -10,3 +10,5 @@ export function download(name: string, text: string): void {
 
     document.body.removeChild(element);
 }
+
+export const themePreference = () => window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
