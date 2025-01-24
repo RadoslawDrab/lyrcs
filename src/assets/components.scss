@@ -143,4 +143,27 @@
 			}
 		}
 	}
+
+	.tooltip[data-tooltip] {
+		position: relative;
+
+		&::before {
+			content: attr(data-tooltip);
+			@apply absolute top-full left-0 px-3 py-1 rounded;
+			@apply bg-zinc-700 dark:bg-zinc-700 text-zinc-200;
+			@apply transition-all opacity-0;
+		}
+
+		&:hover::before {
+			@apply opacity-100;
+		}
+
+		&.tooltip__fit::before {
+			@apply w-fit;
+		}
+
+		&.tooltip__max::before {
+			@apply min-w-max;
+		}
+	}
 }
