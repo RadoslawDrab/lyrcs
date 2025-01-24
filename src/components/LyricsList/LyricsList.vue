@@ -76,6 +76,7 @@ defineExpose({
       left: 0;
       content: "";
       height: 100%;
+
       animation: fill-in linear forwards;
       animation-duration: var(--duration);
       animation-play-state: var(--state);

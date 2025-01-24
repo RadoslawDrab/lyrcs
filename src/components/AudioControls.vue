@@ -27,8 +27,7 @@ const currentTime = ref<number>(0)
 
 function getTimeFormatted(inverted: boolean = false) {
   const time = Math.abs(inverted ? (audioElement.value?.duration ?? 0) - currentTime.value : currentTime.value)
-
-  return getTime(time, 3)
+  return getTime(isNaN(time) ? 0 : time, 3)
 }
 
 function togglePlay() {

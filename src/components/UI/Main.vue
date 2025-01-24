@@ -20,7 +20,7 @@ const lines = computed<Line[]>(() => {
 
   return lyrics.value?.split(/(?<!;)\n/)
                .filter((line) => line.trim().length > 0)
-               .map((line, index) => ({ text: line.trim(), start: 0, end: 0, index }))
+               .map((line, index) => ({ text: line.trim(), start: 0, end: 0, index } as Line))
 });
 
 const currentLine = ref<number>(0)
